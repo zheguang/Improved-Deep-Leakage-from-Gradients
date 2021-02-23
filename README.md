@@ -37,7 +37,7 @@ label as opposed to DLG which extracts wrong labels frequently.
 
 ## Our further work <br>
 We further leveraged gradient matching to condense the large training set into small synthetic set for efficient deep learning - Dataset Condensation with Gradient Matching [[PDF]](https://openreview.net/pdf?id=mSAKhLYLSsl). [[Code]](https://github.com/VICO-UoE/DatasetCondensation). ICLR 2021 Oral. <br>
-Our experiments show that we can condense large training sets into tiny synthetic ones and obtain good generalization ability when train arbitrary randomly initialized deep networks with them.  <br>
+Our experiments show that we can condense large training sets into tiny synthetic ones and obtain good generalization ability when train arbitrary randomly initialized deep networks with them. It's a promising solution to privacy protection and safe federated learning using the synthetic training set.   <br>
 |  | MNIST | FashionMNIST | SVHN | CIFAR10 |
  :-: | :-: | :-: | :-: | :-:
 | 1 img/cls  | 91.7 | 70.5 | 31.2 | 28.3 |
