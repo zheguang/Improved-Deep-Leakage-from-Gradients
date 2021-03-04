@@ -45,4 +45,4 @@ It's a promising solution to privacy protection and safe federated learning usin
 | 10 img/cls | 97.4 | 82.3 | 76.1 | 44.9 |
 | 50 img/cls | 98.8 | 83.6 | 82.3 | 53.9 |
 
-Table 2: Testing accuracies (%) of deep neural networks trained on 1, 10 or 50 synthetic image(s)/class.
+Table 2: Testing accuracies (%) of ConvNets trained from scratch on 1, 10 or 50 synthetic image(s)/class.
