@@ -82,15 +82,15 @@ def lfw_dataset(lfw_path, shape_img):
 
 
 def main():
-    dataset = 'lfw'
+    dataset = 'MNIST'
     root_path = '.'
     data_path = os.path.join(root_path, '../data').replace('\\', '/')
     save_path = os.path.join(root_path, 'results/iDLG_%s'%dataset).replace('\\', '/')
     
     lr = 1.0
     num_dummy = 1
-    Iteration = 300
-    num_exp = 1000
+    Iteration = 100
+    num_exp = 1
 
     use_cuda = torch.cuda.is_available()
     device = 'cuda' if use_cuda else 'cpu'
@@ -140,15 +140,21 @@ def main():
 
 
     ''' train DLG and iDLG '''
+    # np.random.seed(37)
     for idx_net in range(num_exp):
-        net = LeNet(channel=channel, hideen=hidden, num_classes=num_classes)
-        net.apply(weights_init)
+        # net = LeNet(channel=channel, hideen=hidden, num_classes=num_classes)
+        # net.apply(weights_init)
 
         print('running %d|%d experiment'%(idx_net, num_exp))
-        net = net.to(device)
+        # net = net.to(device)
         idx_shuffle = np.random.permutation(len(dst))
 
         for method in ['DLG', 'iDLG']:
+            net = LeNet(channel=channel, hideen=hidden, num_classes=num_classes)
+            net.apply(weights_init)
+            net = net.to(device)
+
+            # torch.manual_seed(7)
             print('%s, Try to generate %d images' % (method, num_dummy))
 
             criterion = nn.CrossEntropyLoss().to(device)
@@ -170,14 +176,83 @@ def main():
 
 
             # compute original gradient
-            out = net(gt_data)
-            y = criterion(out, gt_label)
-            dy_dx = torch.autograd.grad(y, net.parameters())
-            original_dy_dx = list((_.detach().clone() for _ in dy_dx))
+            # print('gt_data = ', gt_data)
+            # print('net.parameters = ', list((_.detach().clone() for _ in net.parameters())))
+            # params_0 = list((_.detach().clone() for _ in net.parameters()))
+
+            # out = net(gt_data)
+            # y = criterion(out, gt_label)
+            # dy_dx = torch.autograd.grad(y, net.parameters())
+            # original_dy_dx = list((_.detach().clone() for _ in dy_dx))
+
+            # # print('original_dy_dx', original_dy_dx)
+            # # print('net.parameters = ', list((_.detach().clone() for _ in net.parameters())))
+            # params_1 = list((_.detach().clone() for _ in net.parameters()))
+            # params_diff = 0
+            # for p0, p1 in zip(params_0, params_1):
+            #     params_diff += ((p0 - p1) ** 2).sum()
+            # print('params_diff', params_diff)
+
+            # for j in range(10):
+            #     net.zero_grad()     # zeroes the gradient buffers of all parameters
+            #     print('conv1.bias.grad before backward')
+            #     print(net.conv1.bias.grad)
+            #     dy_dx.backward()
+            #     print('conv1.bias.grad after backward')
+            #     print(net.conv1.bias.grad)
+
+            # create your optimizer
+            model_lr = 0.0001
+            model_opt = torch.optim.SGD(net.parameters(), lr=model_lr)
+
+            model_params_history = []
+            model_params_history.append(list(p.detach().clone() for p in net.parameters()))
+            model_grads_history = []
+
+            # in your training loop:
+            for j in range(10):
+                model_opt.zero_grad()   # zero the gradient buffers
+                out = net(gt_data)
+                model_loss = criterion(out, gt_label)
+                model_loss.backward()
+                model_opt.step()    # Does the update
+                model_params_history.append(list(p.detach().clone() for p in net.parameters()))
+                # model_params_history += [net.parameters()]
+
+                # dl_dw = torch.autograd.grad(model_loss, net.parameters())
+                model_grads_history.append(list(p.grad.detach().clone() for p in net.parameters()))
+                # model_grads_history += [net.parameters.grad]
+            # print('model loss = ', model_loss)
+
+            # out = net(gt_data)
+            # y = criterion(out, gt_label)
+            # dy_dx = torch.autograd.grad(y, net.parameters())
+            # original_dy_dx = list((_.detach().clone() for _ in dy_dx))
+            # print('len(original_dy_dx) = ', len(original_dy_dx))
+            # print('original_dy_dx', original_dy_dx)
+            # print(type(original_dy_dx))
+            # original_dy_dx[2] = torch.tensor(np.random.normal(scale=0.0001,size=original_dy_dx[2].shape))
+            # use params some time back
+            net_params = [torch.tensor(t).to(device).requires_grad_(True) for t in model_params_history[1]]
+            # reset model to params set time back
+            for p, pp in zip(net.parameters(), net_params):
+                p.data = pp
+
+            # dy_dx = model_grads_history[0]
+            # original_dy_dx = list((_.detach().clone() for _ in dy_dx))
+            original_dy_dx = model_grads_history[1]
+
+            # print(original_dy_dx[2][0])
+            # original_dy_dx[2][0] = (model_params_history[1][2][0] - model_params_history[10][2][0]) / model_lr * (1/9)
+            # original_dy_dx[2] = (model_params_history[1][2] - model_params_history[10][2]) / model_lr * (1/9)
+            original_dy_dx = [(a - b) / model_lr * (1/9) for a, b in zip(model_params_history[1], model_params_history[10])]
+            # print(original_dy_dx[2][0])
 
             # generate dummy data and label
             dummy_data = torch.randn(gt_data.size()).to(device).requires_grad_(True)
             dummy_label = torch.randn((gt_data.shape[0], num_classes)).to(device).requires_grad_(True)
+            # print('dummy_data = ', dummy_data)
+            print('dummy_label = ', dummy_label)
 
             if method == 'DLG':
                 optimizer = torch.optim.LBFGS([dummy_data, dummy_label], lr=lr)
@@ -206,6 +281,7 @@ def main():
 
                     dummy_dy_dx = torch.autograd.grad(dummy_loss, net.parameters(), create_graph=True)
 
+                    # original_dy_dx[2] = torch.tensor(np.random.normal(scale=0.0001,size=original_dy_dx[2].shape))
                     grad_diff = 0
                     for gx, gy in zip(dummy_dy_dx, original_dy_dx):
                         grad_diff += ((gx - gy) ** 2).sum()
@@ -219,7 +295,8 @@ def main():
                 mses.append(torch.mean((dummy_data-gt_data)**2).item())
 
 
-                if iters % int(Iteration / 30) == 0:
+                # if iters % int(Iteration / 30) == 0:
+                if iters % 10 == 0:
                     current_time = str(time.strftime("[%Y-%m-%d %H:%M:%S]", time.localtime()))
                     print(current_time, iters, 'loss = %.8f, mse = %.8f' %(current_loss, mses[-1]))
                     history.append([tp(dummy_data[imidx].cpu()) for imidx in range(num_dummy)])

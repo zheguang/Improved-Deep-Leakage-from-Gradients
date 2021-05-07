@@ -1,0 +1,182 @@
+(1) larger gradient in early training -> easier attack
+
+- param subset difference, gradient subset
+- effects of polling + sharding
+
+
+(2) aggregated gradient on the same example (fed sgd on small data)
+(3) aggregated gradient on local batch (fed sgd)
+(5) aggregaetd gradients on several random subsets of local batch (shuffle model)
+
+
+iters = 0
+
+[shuyuan@princesair]$ python3 iDLG.py
+MNIST root_path: .
+MNIST data_path: ./../data
+MNIST save_path: ./results/iDLG_MNIST
+running 0|1 experiment
+DLG, Try to generate 1 images
+dummy_label =  tensor([[ 1.9309,  0.0450,  0.6351, -2.1714,  1.9869, -0.7882, -0.4240,  0.4044,
+          0.3819, -0.5306]], requires_grad=True)
+lr = 1.0
+[2021-05-06 01:59:18] 0 loss = 90.46357727, mse = 4.45574999
+[2021-05-06 01:59:21] 10 loss = 0.00009818, mse = 0.00006229
+[2021-05-06 01:59:22] 20 loss = 0.00000002, mse = 0.00000001
+iDLG, Try to generate 1 images
+dummy_label =  tensor([[ 1.9309,  0.0450,  0.6351, -2.1714,  1.9869, -0.7882, -0.4240,  0.4044,
+          0.3819, -0.5306]], requires_grad=True)
+lr = 1.0
+[2021-05-06 01:59:23] 0 loss = 10.29197788, mse = 0.58632165
+[2021-05-06 01:59:24] 10 loss = 0.00000402, mse = 0.00000448
+[2021-05-06 01:59:25] 20 loss = 0.00000004, mse = 0.00000002
+imidx_list: [11147]
+loss_DLG: 2.3904446422307046e-08 loss_iDLG: 3.5937155473675375e-08
+mse_DLG: 5.155459170680388e-09 mse_iDLG: 2.3906260082640074e-08
+gt_label: [2] lab_DLG: 2 lab_iDLG: 2
+----------------------
+
+
+iters = 1
+
+
+[shuyuan@princesair]$ python3 iDLG.py
+MNIST root_path: .
+MNIST data_path: ./../data
+MNIST save_path: ./results/iDLG_MNIST
+running 0|1 experiment
+DLG, Try to generate 1 images
+model loss =  tensor(7.9917, grad_fn=<NllLossBackward>)
+dummy_label =  tensor([[ 1.9309,  0.0450,  0.6351, -2.1714,  1.9869, -0.7882, -0.4240,  0.4044,
+          0.3819, -0.5306]], requires_grad=True)
+lr = 1.0
+[2021-05-06 01:39:39] 0 loss = 15.46749115, mse = 0.80766761
+[2021-05-06 01:39:40] 10 loss = 0.00024753, mse = 0.00025672
+[2021-05-06 01:39:42] 20 loss = 0.00002783, mse = 0.00001574
+[2021-05-06 01:39:44] 30 loss = 0.00000040, mse = 0.00000023
+iDLG, Try to generate 1 images
+model loss =  tensor(8.9581, grad_fn=<NllLossBackward>)
+dummy_label =  tensor([[ 1.9309,  0.0450,  0.6351, -2.1714,  1.9869, -0.7882, -0.4240,  0.4044,
+          0.3819, -0.5306]], requires_grad=True)
+lr = 1.0
+[2021-05-06 01:39:44] 0 loss = 9.00950909, mse = 0.66778612
+[2021-05-06 01:39:46] 10 loss = 0.00000175, mse = 0.00000181
+[2021-05-06 01:39:47] 20 loss = 0.00000003, mse = 0.00000002
+imidx_list: [11147]
+loss_DLG: 3.9961392417353636e-07 loss_iDLG: 3.102607593064022e-08
+mse_DLG: 2.2907690322426788e-07 mse_iDLG: 2.3414093774931644e-08
+gt_label: [2] lab_DLG: 2 lab_iDLG: 2
+----------------------
+
+
+
+iters = 10
+
+[shuyuan@princesair]$ python3 iDLG.py
+MNIST root_path: .
+MNIST data_path: ./../data
+MNIST save_path: ./results/iDLG_MNIST
+running 0|1 experiment
+DLG, Try to generate 1 images
+model loss =  tensor(0.0160, grad_fn=<NllLossBackward>)
+dummy_label =  tensor([[ 1.9309,  0.0450,  0.6351, -2.1714,  1.9869, -0.7882, -0.4240,  0.4044,
+          0.3819, -0.5306]], requires_grad=True)
+lr = 1.0
+[2021-05-06 01:32:27] 0 loss = 0.08806521, mse = 11.82766628
+[2021-05-06 01:32:28] 10 loss = 0.08132078, mse = 11.83620548
+[2021-05-06 01:32:29] 20 loss = 0.07094941, mse = 11.84770870
+[2021-05-06 01:32:30] 30 loss = 0.09432407, mse = 696675.00000000
+[2021-05-06 01:32:31] 40 loss = 0.09432407, mse = 696675.00000000
+[2021-05-06 01:32:31] 50 loss = 0.09432407, mse = 696675.00000000
+[2021-05-06 01:32:31] 60 loss = 0.09432407, mse = 696675.00000000
+[2021-05-06 01:32:32] 70 loss = 0.09432407, mse = 696675.00000000
+[2021-05-06 01:32:32] 80 loss = 0.09432407, mse = 696675.00000000
+[2021-05-06 01:32:33] 90 loss = 0.09432407, mse = 696675.00000000
+iDLG, Try to generate 1 images
+model loss =  tensor(0.0274, grad_fn=<NllLossBackward>)
+dummy_label =  tensor([[ 1.9309,  0.0450,  0.6351, -2.1714,  1.9869, -0.7882, -0.4240,  0.4044,
+          0.3819, -0.5306]], requires_grad=True)
+lr = 1.0
+[2021-05-06 01:32:33] 0 loss = 0.02566160, mse = 1.09574413
+[2021-05-06 01:32:35] 10 loss = 0.00002312, mse = 0.01636969
+[2021-05-06 01:32:37] 20 loss = 0.00000011, mse = 0.00016138
+imidx_list: [11147]
+loss_DLG: 0.09432407468557358 loss_iDLG: 1.0760535928966419e-07
+mse_DLG: 696675.0 mse_iDLG: 0.00016137881902977824
+gt_label: [2] lab_DLG: 2 lab_iDLG: 2
+----------------------
+
+
+model iters: 100
+
+
+[shuyuan@princesair]$ python3 iDLG.py
+MNIST root_path: .
+MNIST data_path: ./../data
+MNIST save_path: ./results/iDLG_MNIST
+running 0|1 experiment
+DLG, Try to generate 1 images
+model loss =  tensor(0.0029, grad_fn=<NllLossBackward>)
+dummy_label =  tensor([[ 1.9309,  0.0450,  0.6351, -2.1714,  1.9869, -0.7882, -0.4240,  0.4044,
+          0.3819, -0.5306]], requires_grad=True)
+lr = 1.0
+[2021-05-06 01:37:23] 0 loss = 0.00049727, mse = 1.32136083
+[2021-05-06 01:37:25] 10 loss = 0.00000080, mse = 0.04798304
+iDLG, Try to generate 1 images
+model loss =  tensor(0.0024, grad_fn=<NllLossBackward>)
+dummy_label =  tensor([[ 1.9309,  0.0450,  0.6351, -2.1714,  1.9869, -0.7882, -0.4240,  0.4044,
+          0.3819, -0.5306]], requires_grad=True)
+lr = 1.0
+[2021-05-06 01:37:26] 0 loss = 0.00041125, mse = 1.17260838
+[2021-05-06 01:37:27] 10 loss = 0.00000034, mse = 0.02395534
+imidx_list: [11147]
+loss_DLG: 8.04190790404391e-07 loss_iDLG: 3.4349366728747555e-07
+mse_DLG: 0.047983039170503616 mse_iDLG: 0.023955339565873146
+gt_label: [2] lab_DLG: 2 lab_iDLG: 2
+----------------------
+
+
+
+
+model iters: 1000
+
+[shuyuan@princesair]$ python3 iDLG.py
+MNIST root_path: .
+MNIST data_path: ./../data
+MNIST save_path: ./results/iDLG_MNIST
+running 0|1 experiment
+DLG, Try to generate 1 images
+model loss =  tensor(0.0003, grad_fn=<NllLossBackward>)
+dummy_label =  tensor([[ 1.9309,  0.0450,  0.6351, -2.1714,  1.9869, -0.7882, -0.4240,  0.4044,
+          0.3819, -0.5306]], requires_grad=True)
+lr = 1.0
+[2021-05-06 01:34:45] 0 loss = 0.00001534, mse = 1.54514432
+[2021-05-06 01:34:45] 10 loss = 0.00001534, mse = 1.54514432
+[2021-05-06 01:34:45] 20 loss = 0.00001534, mse = 1.54514432
+[2021-05-06 01:34:46] 30 loss = 0.00001534, mse = 1.54514432
+[2021-05-06 01:34:46] 40 loss = 0.00001534, mse = 1.54514432
+[2021-05-06 01:34:46] 50 loss = 0.00001534, mse = 1.54514432
+[2021-05-06 01:34:47] 60 loss = 0.00001534, mse = 1.54514432
+[2021-05-06 01:34:47] 70 loss = 0.00001534, mse = 1.54514432
+[2021-05-06 01:34:48] 80 loss = 0.00001534, mse = 1.54514432
+[2021-05-06 01:34:48] 90 loss = 0.00001534, mse = 1.54514432
+iDLG, Try to generate 1 images
+model loss =  tensor(0.0002, grad_fn=<NllLossBackward>)
+dummy_label =  tensor([[ 1.9309,  0.0450,  0.6351, -2.1714,  1.9869, -0.7882, -0.4240,  0.4044,
+          0.3819, -0.5306]], requires_grad=True)
+lr = 1.0
+[2021-05-06 01:34:50] 0 loss = 0.00000745, mse = 1.15795553
+[2021-05-06 01:34:51] 10 loss = 0.00000745, mse = 1.15795553
+[2021-05-06 01:34:51] 20 loss = 0.00000745, mse = 1.15795553
+[2021-05-06 01:34:51] 30 loss = 0.00000745, mse = 1.15795553
+[2021-05-06 01:34:52] 40 loss = 0.00000745, mse = 1.15795553
+[2021-05-06 01:34:52] 50 loss = 0.00000745, mse = 1.15795553
+[2021-05-06 01:34:52] 60 loss = 0.00000745, mse = 1.15795553
+[2021-05-06 01:34:53] 70 loss = 0.00000745, mse = 1.15795553
+[2021-05-06 01:34:53] 80 loss = 0.00000745, mse = 1.15795553
+[2021-05-06 01:34:54] 90 loss = 0.00000745, mse = 1.15795553
+imidx_list: [11147]
+loss_DLG: 1.5336929209297523e-05 loss_iDLG: 7.451196324836928e-06
+mse_DLG: 1.5451443195343018 mse_iDLG: 1.157955527305603
+gt_label: [2] lab_DLG: 2 lab_iDLG: 2
+----------------------
